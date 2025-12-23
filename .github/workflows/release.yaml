@@ -223,14 +223,14 @@ jobs:
 
       - name: Build and tag Docker image
         run: |
-          docker build -t ghcr.io/${{ github.repository }}/kodekloud-records:${{ env.VERSION }} .
-          docker tag ghcr.io/${{ github.repository }}/kodekloud-records:${{ env.VERSION }} ghcr.io/${{ github.repository }}/kodekloud-records:latest
+          docker build -t ghcr.io/${{ toLower(github.repository) }}/kodekloud-records:${{ env.VERSION }} .
+          docker tag ghcr.io/${{ toLower(github.repository) }}/kodekloud-records:${{ env.VERSION }} ghcr.io/${{ toLower(github.repository) }}/kodekloud-records:latest
           echo "🐳 Docker image built: kodekloud-records:${{ env.VERSION }}"
 
       - name: Push Docker image to GitHub Container Registry
         run: |
-          docker push ghcr.io/${{ github.repository }}/kodekloud-records:${{ env.VERSION }}
-          docker push ghcr.io/${{ github.repository }}/kodekloud-records:latest
+          docker push ghcr.io/${{ toLower(github.repository) }}/kodekloud-records:${{ env.VERSION }}
+          docker push ghcr.io/${{ toLower(github.repository) }}/kodekloud-records:latest
           echo "📦 Images pushed to GHCR"
 
       # Step 5: Uncomment to add container vulnerability scanning
@@ -242,7 +242,7 @@ jobs:
       #     # Option A: Scan everything (may find system vulnerabilities)
       #     echo "📊 Full vulnerability report:"
           
-      #     grype ghcr.io/${{ github.repository }}/kodekloud-records:${{ env.VERSION }} \
+      #     grype ghcr.io/${{ toLower(github.repository) }}/kodekloud-records:${{ env.VERSION }} \
       #       --fail-on high \
       #       --only-fixed 
           
