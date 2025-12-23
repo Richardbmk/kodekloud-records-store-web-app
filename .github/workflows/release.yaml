@@ -203,6 +203,11 @@ jobs:
           echo "VERSION=${GITHUB_SHA::7}" >> $GITHUB_ENV
           echo "Building version: ${GITHUB_SHA::7}"
 
+      - name: Set lowercase repository name
+        run: |
+          echo "REPO_NAME_LOWER=$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+          echo "Lowercase repository name: $(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')"
+
       # Step 4: Choose your authentication method
       # 🚨 SECURITY ISSUE: Uncomment ONLY ONE of the following login methods:
 
@@ -223,14 +228,14 @@ jobs:
 
       - name: Build and tag Docker image
         run: |
-          docker build -t ghcr.io/${{ lower(github.repository) }}/kodekloud-records:${{ env.VERSION }} .
-          docker tag ghcr.io/${{ lower(github.repository) }}/kodekloud-records:${{ env.VERSION }} ghcr.io/${{ lower(github.repository) }}/kodekloud-records:latest
+          docker build -t ghcr.io/${{ env.REPO_NAME_LOWER }}/kodekloud-records:${{ env.VERSION }} .
+          docker tag ghcr.io/${{ env.REPO_NAME_LOWER }}/kodekloud-records:${{ env.VERSION }} ghcr.io/${{ env.REPO_NAME_LOWER }}/kodekloud-records:latest
           echo "🐳 Docker image built: kodekloud-records:${{ env.VERSION }}"
 
       - name: Push Docker image to GitHub Container Registry
         run: |
-          docker push ghcr.io/${{ lower(github.repository) }}/kodekloud-records:${{ env.VERSION }}
-          docker push ghcr.io/${{ lower(github.repository) }}/kodekloud-records:latest
+          docker push ghcr.io/${{ env.REPO_NAME_LOWER }}/kodekloud-records:${{ env.VERSION }}
+          docker push ghcr.io/${{ env.REPO_NAME_LOWER }}/kodekloud-records:latest
           echo "📦 Images pushed to GHCR"
 
       # Step 5: Uncomment to add container vulnerability scanning
@@ -242,7 +247,7 @@ jobs:
       #     # Option A: Scan everything (may find system vulnerabilities)
       #     echo "📊 Full vulnerability report:"
 
-      #     grype ghcr.io/${{ lower(github.repository) }}/kodekloud-records:${{ env.VERSION }} \
+      #     grype ghcr.io/${{ env.REPO_NAME_LOWER }}/kodekloud-records:${{ env.VERSION }} \
       #       --fail-on high \
       #       --only-fixed
 
