@@ -2,17 +2,19 @@ groups:
   - name: SLI_Latency
     rules:
       - record: sli:latency:p90
+        # sli:latency:p95 = 0.25 seconds
+        # → "95% of API requests complete in under 250ms"
         expr: histogram_quantile(0.90, sum(rate(http_request_duration_seconds_bucket[5m])) by (le, endpoint))
         labels:
           sli: latency
           quantile: p90
-      
+
       - record: sli:latency:p95
         expr: histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket[5m])) by (le, endpoint))
         labels:
           sli: latency
           quantile: p95
-      
+
       - record: sli:latency:p99
         expr: histogram_quantile(0.99, sum(rate(http_request_duration_seconds_bucket[5m])) by (le, endpoint))
         labels:
@@ -26,13 +28,15 @@ groups:
         labels:
           sli: availability
           window: 5m
-      
+
       - record: sli:availability:ratio_1h
+        # sli:availability:ratio_1h = 0.995
+        # → "Service was available 99.5% of the time in the last hour"
         expr: avg_over_time(probe_success{endpoint="/health"}[1h])
         labels:
           sli: availability
           window: 1h
-      
+
       - record: sli:availability:ratio_24h
         expr: avg_over_time(probe_success{endpoint="/health"}[24h])
         labels:
@@ -46,8 +50,10 @@ groups:
         labels:
           sli: error_rate
           window: 5m
-      
+
       - record: sli:error_rate:ratio_1h
+        # sli:error_rate:ratio_1h = 0.001
+        # → "0.1% of requests failed in the last hour"
         expr: sum(rate(http_request_errors_total[1h])) / sum(rate(http_requests_total[1h]))
         labels:
           sli: error_rate
@@ -56,6 +62,8 @@ groups:
   - name: SLI_Throughput
     rules:
       - record: sli:throughput:requests_per_second
+        # sli:throughput:requests_per_second{endpoint="/api/albums"} = 15.2
+        # → "The albums API receives 15.2 requests per second"
         expr: sum(rate(http_requests_total[5m])) by (endpoint)
         labels:
           sli: throughput
